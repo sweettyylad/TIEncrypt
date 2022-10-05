@@ -1,0 +1,29 @@
+.app {
+  &-right {
+    padding-left: 50px;
+    &-content {
+      &__caption {
+        font-size: 48px;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        margin-bottom: 30px;
+      }
+      &__instruction {
+        list-style: none;
+        &-item {
+          position: relative;
+          font-size: 20px;
+          letter-spacing: 0.02em;
+          margin-left: 20px;
+          margin-bottom: 5px;
+          &:before {
+            content: "\00bb";
+            position: absolute;
+            left: -20px;
+            border-radius: 100%;
+          }
+        }
+      }
+    }
+  }
+}
