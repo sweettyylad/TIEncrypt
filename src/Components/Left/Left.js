@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import './Left.scss';
-import fl from '../FuncLib';
+
 function Left(props) {
   const text = useRef(null);
 
   useEffect(() => {
-    fl.renderSelectVariables();
+    props.fl.renderSelectVariables();
   }, []);
 
   return (
@@ -25,7 +25,7 @@ function Left(props) {
       <div className="app-left__controls">
         <button
           onClick={() => {
-            props.sendValurToParent(text.current.value, props.setAlph);
+            props.sendValueToParent(text.current.value);
           }}
           className="app-left__controls-button">
           Получить результат
@@ -33,7 +33,7 @@ function Left(props) {
         <select
           className="app-left__controls-select"
           id="variableSelect"
-          onChange={fl.changeVariable}>
+          onChange={props.fl.renderSelectVariables}>
           <option value="0">Символы и вероятности</option>
           <option value="1">Символы и их количество</option>
           <option value="2">Строка с текстом</option>

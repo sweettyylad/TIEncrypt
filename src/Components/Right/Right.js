@@ -20,7 +20,7 @@ const InitialContent = () => {
 };
 function Right(props) {
   return (
-    <div className="app-right">
+    <div className="app-right" id="right-content">
       <InitialContent />
     </div>
   );

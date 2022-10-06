@@ -16,13 +16,10 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    console.log(alph);
-  }, [alph]);
   return (
     <div className="app" id="app">
-      <Left setAlph={setAlph} sendValurToParent={fl.getParams} />
-      <Right />
+      <Left fl={fl} sendValueToParent={fl.encodeData} />
+      <Right fl={fl} />
     </div>
   );
 }
