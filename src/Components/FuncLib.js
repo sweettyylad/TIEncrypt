@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import { slice } from 'underscore/modules/_setup';
 
 const fl = {
   centrifyElement: function (id) {
@@ -67,6 +68,26 @@ const fl = {
           break;
       }
     }
+    function sumOfProbs(arr) {
+      return _.reduce(arr, (memo, e) => e.probability + memo, 0);
+    }
+    function sliceArrByProbs(arr) {
+      let newArr = [...arr];
+      let mid = 0,
+        sum = 0,
+        min = 1,
+        minIndex;
+      _.each(newArr, (e, k) => {
+        sum += e.probability;
+        if (Math.abs(sum - (1 - sum)) < min) {
+          min = Math.abs(sum - (1 - sum));
+          minIndex = k;
+        }
+        console.log(k, sum - (1 - sum));
+      });
+      console.log(arr);
+      console.log(min, minIndex);
+    }
     if (param === '') {
       return;
     }
@@ -84,6 +105,8 @@ const fl = {
       }
     }
     let arr = paramsMutator(param);
+    arr = arr.sort((a, b) => a.probability - b.probability).reverse();
+    sliceArrByProbs(arr);
     setAlph(arr);
   },
   changeVariable: function (e) {
