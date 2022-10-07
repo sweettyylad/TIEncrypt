@@ -21,22 +21,62 @@ function Functions() {
   };
 
   this.viewEncoded = function (arr) {
+    function copy(str) {
+      var inp = document.createElement('input');
+      document.body.appendChild(inp);
+      inp.value = str;
+      inp.select();
+      document.execCommand('copy', false);
+      inp.remove();
+    }
+
     const right_content = document.getElementById('right-content');
-    console.log(arr);
     let result_string;
-    result_string = '<table>';
+    result_string = '';
     result_string += _.map(arr, (e) => {
-      return `<tr><td>${e.symbol}</td><td>${e.probability}</td><td>${e.code}</td></tr>`;
-    });
-    result_string += '</table>';
+      return `<div class = "app-right-content__result-item"><div>${e.symbol}</div><div>${e.probability}</div><div>${e.code}</div></div>`;
+    }).join('');
+
     right_content.innerHTML = `
-    <div className='app-right-content'>
-      <h1 className='app-right-content__caption'>Результат</h1>
-      <ul className='app-right-content__result'>
+    <div class='app-right-content'>
+      <h1 class='app-right-content__caption'>Результат</h1>
+      <div class='app-right-content__title'>
+      <div class='app-right-content__title-symbol'>Символ</div>
+      <div class='app-right-content__title-probability'>Вероятность</div>
+      <div class='app-right-content__title-code'>Код</div>
+      </div>
+      <div class='app-right-content__instruction app-right-content__result'>
       ${result_string}
-      </ul>
+      </div>
+      <div class='app-right-content__controls'>
+      <button class="app-right-content__controls-button app-left__controls-button" id = "copy_result">
+          Копировать в JSON
+        </button>
+        <button class="app-right-content__controls-button app-left__controls-button" id = "copy_resulttext">
+          Копировать текст
+        </button>
+</div>
     </div>
     `;
+
+    let JSONstr = JSON.stringify(arr);
+    console.log(arr);
+    let TXTstr = _.map(
+      arr,
+      (e) => `${e.symbol}:${e.probability}(${e.code})`,
+    ).join(', ');
+
+    document
+      .getElementById('copy_result')
+      .addEventListener('click', function () {
+        copy(JSONstr);
+      });
+
+    document
+      .getElementById('copy_resulttext')
+      .addEventListener('click', function () {
+        copy(TXTstr);
+      });
   };
 
   /*
@@ -171,15 +211,31 @@ function Functions() {
 
     function mutateStr(str) {
       let arr = {};
+      str = str
+        .replaceAll('ё', 'е')
+        .replaceAll('ъ', 'ь')
+        .replaceAll('\n', '')
+        .replaceAll('.', '')
+        .replaceAll(',', '')
+        .replaceAll(';', '')
+        .replaceAll(':', '')
+        .replaceAll('-', '')
+        .replaceAll('!', '')
+        .replaceAll('?', '')
+        .replaceAll(' ', '')
+        .toLowerCase();
+
       _.each(str, (e) => {
         if (e === ' ') {
           return;
         }
         arr[e] = _.isUndefined(arr[e]) ? 1 : arr[e] + 1;
       });
+
       let string = _.map(arr, (e, k) => {
         return `${k}:${e}`;
       }).join(', ');
+
       return mutateSymbWithCount(string);
     }
 
@@ -205,6 +261,19 @@ function Functions() {
     app.style.top = `${(body_height - app_height) / 2}px`;
   };
   this.renderSelectVariables = function () {
+    document.getElementById('right-content').innerHTML = `
+    <div class="app-right-content">
+      <h1 class="app-right-content__caption">Порядок работы</h1>
+      <ul class="app-right-content__instruction">
+        <li class="app-right-content__instruction-item">
+          Введите <span id="variableText"></span>
+        </li>
+        <li class="app-right-content__instruction-item">
+          Нажмите на кнопку “Получить результат”
+        </li>
+        <li class="app-right-content__instruction-item">Наслаждайтесь</li>
+      </ul>
+    </div>`;
     let currentVariable = document.getElementById('variableSelect').value;
     document.getElementById('variableText').innerText =
       self.variables[currentVariable].textForDesc;

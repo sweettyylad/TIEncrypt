@@ -21,7 +21,7 @@ function Left(props) {
         ref={text}
         className="app-left__textarea"
         placeholder="a:0.01, b:0.02, c:0.03..."
-        value="test"></textarea>
+      />
       <div className="app-left__controls">
         <button
           onClick={() => {

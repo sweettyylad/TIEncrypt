@@ -8,6 +8,49 @@
         letter-spacing: 0.02em;
         margin-bottom: 30px;
       }
+      &__controls {
+        display: flex;
+        justify-content: space-between;
+        &-button {
+          margin: 20px 0;
+        }
+      }
+      &__title {
+        display: flex;
+        font-size: 20px;
+        letter-spacing: 0.02em;
+        padding: 0 20px 10px;
+        &-symbol {
+          width: 100px;
+        }
+        &-probability {
+          width: 150px;
+        }
+        &-code {
+          width: 100px;
+        }
+      }
+      &__result {
+        padding: 10px 30px;
+        max-height: 385px;
+        overflow-y: auto;
+        background: rgba(255, 255, 255, 0.05);
+        &-item {
+          display: flex;
+          div {
+            font-size: 20px;
+            &:nth-child(1) {
+              width: 100px;
+            }
+            &:nth-child(2) {
+              width: 150px;
+            }
+            &:nth-child(3) {
+              width: 100px;
+            }
+          }
+        }
+      }
       &__instruction {
         list-style: none;
         &-item {
@@ -17,7 +60,7 @@
           margin-left: 20px;
           margin-bottom: 5px;
           &:before {
-            content: "\00bb";
+            content: '\00bb';
             position: absolute;
             left: -20px;
             border-radius: 100%;
