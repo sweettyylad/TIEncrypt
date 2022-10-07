@@ -145,10 +145,10 @@ function Functions() {
     */
     function setCodes(arr) {
       _.each(arr[0], (e) => {
-        e.code += '0';
+        e.code += '1';
       });
       _.each(arr[1], (e) => {
-        e.code += '1';
+        e.code += '0';
       });
     }
 
