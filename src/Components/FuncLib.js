@@ -217,7 +217,7 @@ function Functions() {
       arr = _.map(arr, (e) => {
         return {
           symbol: e.symbol,
-          probability: parseFloat((e.probability / sum).toFixed(4)),
+          probability: parseFloat((e.probability / sum).toFixed(3)),
         };
       });
       return arr;
