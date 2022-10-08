@@ -60,7 +60,6 @@ function Functions() {
     `;
 
     let JSONstr = JSON.stringify(arr);
-    console.log(arr);
     let TXTstr = _.map(
       arr,
       (e) => `${e.symbol}:${e.probability}(${e.code})`,
@@ -152,20 +151,35 @@ function Functions() {
       });
     }
 
-    let sum, min_weight, half_index, weight_iterator;
+    /*
+    @description Возвращает индекс массива, на котором его нужно делить пополам
+    @param {Array} arr Массив с символами и их вероятностями
+    @return {int} Индекс элемента, который является крайним для первой подгруппы
+    */
+    function getHalfIndex(arr) {
+      let weight_iterator, min_weight, sum, half, length;
+      half = -1;
+      length = 0;
+      min_weight = 1;
+      weight_iterator = 0;
+      sum = _.reduce(arr, (memo, e) => e.probability + memo, 0);
+      _.each(arr, (e) => {
+        length += 1;
+      });
+      _.each(arr, (e, i) => {
+        weight_iterator += e.probability;
+        if (Math.abs(weight_iterator - (sum - weight_iterator)) < min_weight) {
+          min_weight = Math.abs(weight_iterator - (sum - weight_iterator));
+          half = i;
+          if (i >= Math.floor(length / 2) - 1) {
+            return half;
+          }
+        }
+      });
+      return half;
+    }
 
-    sum = _.reduce(arr, (memo, e) => e.probability + memo, 0);
-    min_weight = 1;
-    half_index = -1;
-    weight_iterator = 0;
-
-    _.each(arr, (e, i) => {
-      weight_iterator += e.probability;
-      if (Math.abs(weight_iterator - (sum - weight_iterator)) < min_weight) {
-        min_weight = Math.abs(weight_iterator - (sum - weight_iterator));
-        half_index = i;
-      }
-    });
+    let half_index = getHalfIndex(arr);
 
     arr = splitArrIntoTwo(arr, half_index);
 
