@@ -4,22 +4,30 @@ import Left from './Left/Left';
 import Right from './Right/Right';
 import './App.scss';
 
-import fl from './FuncLib';
+import Encryptor from './Encryptor';
 
 function App() {
-  const [alph, setAlph] = useState([]);
+  let encryptor = new Encryptor('app');
 
   useEffect(() => {
-    fl.centrifyElement('app');
-    window.addEventListener('resize', () => {
-      fl.centrifyElement('app');
-    });
+    encryptor.init();
   }, []);
+
+  const onChangeVariable = () => {
+    encryptor.renderSelectVariables();
+  };
+  const onEncodeClick = (str) => {
+    encryptor.encodeData(str);
+  };
 
   return (
     <div className="app" id="app">
-      <Left fl={fl} sendValueToParent={fl.encodeData} />
-      <Right fl={fl} />
+      <Left
+        enc={encryptor}
+        onChangeVar={onChangeVariable}
+        encode={onEncodeClick}
+      />
+      <Right enc={encryptor} />
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import _ from 'underscore';
 
 import './Right.scss';
 const InitialContent = () => {
