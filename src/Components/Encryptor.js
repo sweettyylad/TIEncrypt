@@ -218,78 +218,14 @@ class Encryptor {
    * @param {Array} arr Исходный массив
    */
   _encodeData(arr, deep) {
-    let code = _.reduce(arr, (memo, e) => memo + e.symbol, '');
-
     let half_index = this.getMiddleIndex(arr);
     arr = this.splitArrIntoTwo(arr, half_index);
-
-    let code1 = _.reduce(arr[0], (memo, e) => memo + e.symbol, '');
-    let code2 = _.reduce(arr[1], (memo, e) => memo + e.symbol, '');
-
-    if (deep === 0) {
-      this.tree = [{ source: code, final: { senior: code1, junior: code2 } }];
-    } else {
-      this.tree.push({
-        source: code,
-        final: { senior: code1, junior: code2 },
-      });
-    }
 
     _.each(arr, (e) => {
       if (_.isArray(e) && e.length > 1) {
         this._encodeData(e, deep + 1);
       }
     });
-  }
-
-  getNodeByCode(code) {
-    return _.findWhere(this.tree, { source: code });
-  }
-
-  _transformTree(code, parent) {
-    let node = this.getNodeByCode(code);
-
-    if (code.length === 1) {
-      return [
-        {
-          current: code,
-        },
-        `<div>${code}</div>`,
-      ];
-    }
-    let [JunChild, JunTemplate] = this._transformTree(
-      node.final.junior,
-      node.source,
-    );
-    let [SenChild, SenTemplate] = this._transformTree(
-      node.final.senior,
-      node.source,
-    );
-    return [
-      {
-        value: code,
-        children: [SenChild, JunChild],
-      },
-      `<div><h3>${code}</h3><div>${SenTemplate}${JunTemplate}</div></div>`,
-    ];
-  }
-
-  transformTree() {
-    let [JunChild, JunTemplate] = this._transformTree(
-      this.tree[0].final.junior,
-      this.tree[0].source,
-    );
-    let [SenChild, SenTemplate] = this._transformTree(
-      this.tree[0].final.senior,
-      this.tree[0].source,
-    );
-
-    let template = `<div><h3>${this.tree[0].source}</h3><div>${JunTemplate}${SenTemplate}</div></div>`;
-    this.transformedTree = {
-      value: this.tree[0].source,
-      children: [SenChild, JunChild],
-    };
-    console.log(this);
   }
 
   /**
@@ -315,8 +251,6 @@ class Encryptor {
 
     this._encodeData(arr, 0);
     this.encoded = arr;
-    console.log(this.tree);
-    this.transformTree();
     this.showEncoded(this.encoded);
   }
 
