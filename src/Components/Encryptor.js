@@ -80,13 +80,11 @@ class Encryptor {
     switch (this.getSelectValue()) {
       case 0:
         return this.SAPToArray(str);
-        break;
       case 1:
         return this.SACToArray(str);
-        break;
       case 2:
         return this.SToArray(str);
-        break;
+      default:
     }
   }
 

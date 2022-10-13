@@ -7,9 +7,9 @@ function Left(props) {
   return (
     <div className="app-left">
       <h1 className="app-left__text">
-        Кодирование
+        Кодирование&nbsp;
         <br />
-        методом
+        методом&nbsp;
         <br />
         Шеннона-Фано
       </h1>
