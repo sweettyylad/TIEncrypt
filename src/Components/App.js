@@ -8,7 +8,6 @@ import Encryptor from './Encryptor';
 
 function App() {
   let encryptor = new Encryptor('app');
-
   useEffect(() => {
     encryptor.init();
   }, []);

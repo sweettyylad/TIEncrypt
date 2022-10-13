@@ -5,15 +5,17 @@ class Encryptor {
     this.variables = [
       {
         text: 'Символы и вероятности',
-        text_desc: 'символы и вероятности в виде A:0.12, B:0.43...',
+        text_desc:
+          'е:0.105, а:0.087, н:0.073, м:0.055, о:0.055, д:0.05, я:0.05, к:0.05, р:0.05, т:0.05, и:0.046, с:0.046, л:0.037, в:0.027, п:0.027, ы:0.027, у:0.027, ь:0.023, ч:0.023, г:0.018, б:0.018, ж:0.018, ю:0.014, з:0.014, й:0.009',
       },
       {
         text: 'Символы и их количество',
-        text_desc: 'символы и их количество в виде A:10, B:5...',
+        text_desc:
+          'е:105, а:87, н:73, м:55, о:55, д:50, я:50, к:50, р:50, т:50, и:46, с:46, л:37, в:27, п:27, ы:27, у:27, ь:23, ч:23, г:18, б:18, ж:18, ю:14, з:14, й:9',
       },
       {
         text: 'Строка с текстом',
-        text_desc: 'строку с текстом',
+        text_desc: `Сонет<br>Разлука ты, разлука,<br>Чужая сторона,<br>Никто меня не любит,<br>Как мать-сыра-земля.<br>Песня бродяги.<br>Есть люди, присужденные к скитаньям,<br>Где б ни был я,- я всем чужой, всегда.<br>Я предан переменчивым мечтаньям,<br>Подвижным, как текучая вода.<br>Передо мной мелькают города,<br>Деревни, села...`,
       },
     ];
     this.el = el;
@@ -22,8 +24,8 @@ class Encryptor {
   /** Workers */
 
   /**
-   * @description Copy string to Buffer
-   * @param {String} str Your string
+   * @description Копирует текст в буфер
+   * @param {String} str Копируемая строка
    */
   copyStringToBuffer(str) {
     var inp = document.createElement('input');
@@ -35,18 +37,8 @@ class Encryptor {
   }
 
   /**
-   * @description Link centrify method to window resize event
-   */
-  linkResizeEvent() {
-    this.centrifyElementInWindow(this.el);
-    window.addEventListener('resize', () => {
-      this.centrifyElementInWindow(this.el);
-    });
-  }
-
-  /**
-   * @description Get type of work
-   * @return {Int} Your variable
+   * @description Возвращает текущий способ ввода исходных данных
+   * @return {Int} Текущий способ
    */
   getSelectValue() {
     return parseInt(document.getElementById('variableSelect').value);
@@ -55,7 +47,6 @@ class Encryptor {
   init() {
     this.right = document.getElementById('right-content');
     this.select = document.getElementById('variableSelect');
-    this.linkResizeEvent();
     this.renderSelectVariables();
   }
 
@@ -109,7 +100,7 @@ class Encryptor {
       .toLowerCase()
       .replaceAll('\n', '')
       .replaceAll(' ', '')
-      .replace(/[.,:;!?-]/gm, '')
+      .replace(/[^а-яёa-z]/gm, '')
       .replace(/[ъ]/g, 'ь')
       .replace(/[ё]/g, 'е');
   }
@@ -165,7 +156,6 @@ class Encryptor {
    */
   SToArray(str) {
     let string = this.calcCharsInString(this.excludeBadChars(str));
-
     return this.SACToArray(string);
   }
 
@@ -227,14 +217,79 @@ class Encryptor {
    * @description Функция двойник для алгоритма кодирования
    * @param {Array} arr Исходный массив
    */
-  _encodeData(arr) {
+  _encodeData(arr, deep) {
+    let code = _.reduce(arr, (memo, e) => memo + e.symbol, '');
+
     let half_index = this.getMiddleIndex(arr);
     arr = this.splitArrIntoTwo(arr, half_index);
+
+    let code1 = _.reduce(arr[0], (memo, e) => memo + e.symbol, '');
+    let code2 = _.reduce(arr[1], (memo, e) => memo + e.symbol, '');
+
+    if (deep === 0) {
+      this.tree = [{ source: code, final: { senior: code1, junior: code2 } }];
+    } else {
+      this.tree.push({
+        source: code,
+        final: { senior: code1, junior: code2 },
+      });
+    }
+
     _.each(arr, (e) => {
       if (_.isArray(e) && e.length > 1) {
-        this._encodeData(e);
+        this._encodeData(e, deep + 1);
       }
     });
+  }
+
+  getNodeByCode(code) {
+    return _.findWhere(this.tree, { source: code });
+  }
+
+  _transformTree(code, parent) {
+    let node = this.getNodeByCode(code);
+
+    if (code.length === 1) {
+      return [
+        {
+          current: code,
+        },
+        `<div>${code}</div>`,
+      ];
+    }
+    let [JunChild, JunTemplate] = this._transformTree(
+      node.final.junior,
+      node.source,
+    );
+    let [SenChild, SenTemplate] = this._transformTree(
+      node.final.senior,
+      node.source,
+    );
+    return [
+      {
+        value: code,
+        children: [SenChild, JunChild],
+      },
+      `<div><h3>${code}</h3><div>${SenTemplate}${JunTemplate}</div></div>`,
+    ];
+  }
+
+  transformTree() {
+    let [JunChild, JunTemplate] = this._transformTree(
+      this.tree[0].final.junior,
+      this.tree[0].source,
+    );
+    let [SenChild, SenTemplate] = this._transformTree(
+      this.tree[0].final.senior,
+      this.tree[0].source,
+    );
+
+    let template = `<div><h3>${this.tree[0].source}</h3><div>${JunTemplate}${SenTemplate}</div></div>`;
+    this.transformedTree = {
+      value: this.tree[0].source,
+      children: [SenChild, JunChild],
+    };
+    console.log(this);
   }
 
   /**
@@ -258,8 +313,10 @@ class Encryptor {
       };
     });
 
-    this._encodeData(arr);
+    this._encodeData(arr, 0);
     this.encoded = arr;
+    console.log(this.tree);
+    this.transformTree();
     this.showEncoded(this.encoded);
   }
 
@@ -277,20 +334,6 @@ class Encryptor {
   }
 
   /** Render */
-
-  /**
-   * @description Центрирует элемент по размерам страницы
-   * @param {String} id ID элемента, который нужно отцентрировать
-   */
-  centrifyElementInWindow(id) {
-    let app = document.getElementById(id),
-      app_width = app.getBoundingClientRect().width,
-      app_height = app.getBoundingClientRect().height,
-      body_width = window.innerWidth,
-      body_height = window.innerHeight;
-    app.style.left = `${(body_width - app_width) / 2}px`;
-    app.style.top = `${(body_height - app_height) / 2}px`;
-  }
 
   /**
    * @description Рендерит текст для инструкции в соотв. с текущим вариантом алгоритма
@@ -311,7 +354,7 @@ class Encryptor {
       <h1 class='app-right-content__caption'>Порядок работы</h1>
       <ul class='app-right-content__instruction'>
         <li class='app-right-content__instruction-item'>
-          Введите <span id='variableText'>${variable}</span>
+          Введите исходные данные в требуемом виде<br><br>Например:<div id='variableText'>${variable}</div><br>
         </li>
         <li class='app-right-content__instruction-item'>
           Нажмите на кнопку “Получить результат”
@@ -340,6 +383,29 @@ class Encryptor {
     }).join('');
   }
 
+  getEntropy() {
+    return _.reduce(
+      this.encoded,
+      (memo, e) => {
+        return (
+          memo +
+          parseFloat(e.probability) * Math.log2(1 / parseFloat(e.probability))
+        );
+      },
+      0,
+    );
+  }
+
+  getAverageCodeLength() {
+    return _.reduce(
+      this.encoded,
+      (memo, e) => {
+        return memo + parseFloat(e.probability) * e.code.length;
+      },
+      0,
+    );
+  }
+
   /**
    * @description Рендерит шаблон с результатами
    * @param {String} str Таблица с результатами кодирования
@@ -357,14 +423,26 @@ class Encryptor {
         ${str}
       </div>
       <div class='app-right-content__controls'>
+      <span>Копировать в </span>
         <button class='app-right-content__controls-button app-left__controls-button' id = 'copy_result'>
-          Копировать в JSON
+          JSON
         </button>
         <button class='app-right-content__controls-button app-left__controls-button' id = 'copy_resulttext'>
-          Копировать текст
+          TXT
         </button>
       </div>
     </div>
+    <div id='additional-content'>
+        <h1 class='app-right-content__caption'>Дополнительно</h1>
+        <div class='app-right-content__additional-group'>
+          <h2 class='app-right-content__subcaption'>Энтропия</h2>
+          <span>${this.getEntropy()}</span>
+        </div>
+        <div class='app-right-content__additional-group'>
+          <h2 class='app-right-content__subcaption'>Средняя длина кода</h2>
+          <span>${this.getAverageCodeLength()}</span>
+        </div>
+      </div>
     `;
   }
 

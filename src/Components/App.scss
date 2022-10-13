@@ -1,28 +1,24 @@
-@media (min-width: 300px) {
-  :root {
-    --app-width: 100vw;
-    --app-height: 100vh;
+@media (max-width: 1698px) {
+  .app {
+    &-left,
+    &-right {
+      padding: 20px;
+    }
+    &-left {
+      min-width: 272px;
+      &__controls {
+        flex-direction: column;
+        gap: 10px;
+        button,
+        select {
+          width: 100%;
+        }
+      }
+    }
   }
 }
-
-@media (min-width: 768px) {
-  :root {
-    --app-width: 100vw;
-    --app-height: 100vh;
-  }
-}
-
 .app {
-  position: relative;
   display: flex;
-  height: auto;
-  width: 85%;
-  max-width: 1600px;
-  padding: 50px;
-
-  color: #ebebeb;
-
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(75px);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  min-height: 100vh;
+  width: 100vw;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import './Left.scss';
 
 function Left(props) {
@@ -13,19 +13,8 @@ function Left(props) {
         <br />
         Шеннона-Фано
       </h1>
-      <textarea
-        ref={text}
-        className="app-left__textarea"
-        placeholder="a:0.01, b:0.02, c:0.03..."
-      />
+      <textarea ref={text} className="app-left__textarea" placeholder="..." />
       <div className="app-left__controls">
-        <button
-          className="app-left__controls-button"
-          onClick={() => {
-            props.encode(text.current.value);
-          }}>
-          Получить результат
-        </button>
         <select
           id="variableSelect"
           className="app-left__controls-select"
@@ -34,6 +23,13 @@ function Left(props) {
           <option value="1">Символы и их количество</option>
           <option value="2">Строка с текстом</option>
         </select>
+        <button
+          className="app-left__controls-button"
+          onClick={() => {
+            props.encode(text.current.value);
+          }}>
+          Получить результат
+        </button>
       </div>
     </div>
   );
